@@ -1,0 +1,4 @@
+interface:
+  display_name: "Self Iteration"
+  short_description: "Documentation-first, user-approved engineering loops"
+  default_prompt: "Use $self-iteration to plan, implement, reconcile, and optimize this project in user-approved rounds."
