@@ -13,8 +13,8 @@
     {
       "path": "agents/openai.yaml",
       "mode": "0644",
-      "bytes": 305,
-      "sha256": "2a9f4224d708fbb67f8e48e6383d3f1c34cd22d50b4899dcd324e992efb062de"
+      "bytes": 309,
+      "sha256": "61caf1c8ab6cf3bb11d42e65abf96bb0866e50117255adb0b2fe0ddf36967805"
     },
     {
       "path": "assets/iteration-state.md",
@@ -41,5 +41,5 @@
       "sha256": "cc23cb6c0011172ddff24439eb248e85a01e885cbda245929d40f51591d79fd5"
     }
   ],
-  "runtime_revision": "sha256:531e531dda519c66add72150514fe36d2000eaa82c270e0de05d87abdb725978"
+  "runtime_revision": "sha256:7fead2ced27f63e95725f251c217641363bded1bd1b12765265566ba9799dfd4"
 }

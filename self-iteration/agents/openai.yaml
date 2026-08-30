@@ -1,4 +1,4 @@
 interface:
-  display_name: "Self Iteration"
+  display_name: "AAA Self Iteration"
   short_description: "Documentation-first, user-approved engineering loops"
   default_prompt: "Use $self-iteration to establish the documented project baseline, follow my requested complete round count, and ask for my selection before optional implementation."

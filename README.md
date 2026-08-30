@@ -5,6 +5,10 @@ delivery and complete, sequential, user-approved optimization rounds. It is not
 intended for one-off advice, ordinary small edits, repository-wide policy, or
 missing tool connectivity.
 
+Its stable invocation name is `$self-iteration`. On OpenAI hosts, the UI label
+is `AAA Self Iteration` so it sorts early within user Skill listings; host-owned
+or separately grouped system Skills may still appear before it.
+
 ## Current contract
 
 The Skill separates baseline delivery from optimization rounds:
@@ -66,6 +70,9 @@ For a source checkout on WSL/Linux, a user-scoped link is sufficient:
 mkdir -p ~/.agents/skills
 ln -s /absolute/path/to/self-iteration ~/.agents/skills/self-iteration
 ```
+
+Use either this source link or an installed copy under `~/.codex/skills`, not
+both. Codex may discover both roots and show duplicate entries.
 
 Restart the host after installation or replacement so discovery state is
 refreshed. Resolve an existing destination before replacing it; never delete a
