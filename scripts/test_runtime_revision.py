@@ -20,8 +20,6 @@ from runtime_revision import (  # noqa: E402
     DOMAIN,
     RuntimeRevisionError,
     calculate_revision,
-    check_evaluation_binding,
-    check_host_bindings,
     check_manifest,
     check_package_binding,
     classify_durable_state,
@@ -283,20 +281,6 @@ class ManifestAndBindingTests(unittest.TestCase):
                 {"findings": ["manifest_parent_missing"], "ok": False},
             )
             self.assertFalse(parent.exists())
-
-    def test_evaluation_and_host_revision_mismatches_are_named(self):
-        with tempfile.TemporaryDirectory() as directory:
-            root = self._runtime(directory)
-            manifest_path = Path(directory) / "manifest.json"
-            write_manifest(root, manifest_path, "self-iteration")
-            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-            evaluation = Path(directory) / "eval.json"
-            evaluation.write_text(json.dumps({"schema_version": 3, "candidate_revision": "sha256:" + "0" * 64}), encoding="utf-8")
-            self.assertIn("evaluation_candidate_revision_mismatch", check_evaluation_binding(manifest, evaluation))
-            hosts = Path(directory) / "hosts"
-            hosts.mkdir()
-            (hosts / "host.json").write_text(json.dumps({"schema_version": 2, "overall_status": "unverified", "runtime_revision": "sha256:" + "0" * 64}), encoding="utf-8")
-            self.assertIn("host_runtime_revision_mismatch", check_host_bindings(manifest, hosts))
 
     def test_policy_digest_is_separate_from_runtime_revision(self):
         with tempfile.TemporaryDirectory() as directory:

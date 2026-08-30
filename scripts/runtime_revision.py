@@ -339,49 +339,6 @@ def _valid_revision(value):
     )
 
 
-def check_evaluation_binding(manifest, evaluation_path):
-    findings = _manifest_findings(manifest)
-    if findings:
-        return findings
-    try:
-        result = _load_json(evaluation_path, "evaluation_unreadable")
-    except RuntimeRevisionError as exc:
-        return [exc.code]
-    if not isinstance(result, dict):
-        return ["evaluation_not_object"]
-    if result.get("schema_version") != 3:
-        return ["evaluation_schema_invalid"]
-    if result.get("candidate_revision") != manifest["runtime_revision"]:
-        return ["evaluation_candidate_revision_mismatch"]
-    return []
-
-
-def check_host_bindings(manifest, evidence_dir):
-    findings = _manifest_findings(manifest)
-    if findings:
-        return findings
-    directory = Path(evidence_dir)
-    try:
-        files = sorted(directory.glob("*.json"), key=lambda path: path.name)
-    except OSError:
-        return ["host_evidence_directory_unreadable"]
-    for path in files:
-        try:
-            evidence = _load_json(path, "host_evidence_unreadable")
-        except RuntimeRevisionError as exc:
-            findings.append(exc.code)
-            continue
-        if not isinstance(evidence, dict):
-            findings.append("host_evidence_not_object")
-        elif evidence.get("schema_version") != 2:
-            findings.append("host_schema_invalid")
-        elif evidence.get("overall_status") not in {"failed", "unverified", "verified"}:
-            findings.append("host_status_invalid")
-        elif evidence.get("runtime_revision") != manifest["runtime_revision"]:
-            findings.append("host_runtime_revision_mismatch")
-    return sorted(set(findings))
-
-
 def policy_digest(policy_path):
     try:
         return hashlib.sha256(Path(policy_path).read_bytes()).hexdigest()
@@ -473,8 +430,6 @@ def main(argv=None):
     check.add_argument("--manifest", required=True)
     bindings = subcommands.add_parser("check-bindings")
     bindings.add_argument("--manifest", required=True)
-    bindings.add_argument("--eval-result")
-    bindings.add_argument("--host-evidence-dir")
     bindings.add_argument("--archive")
     bindings.add_argument("--receipt")
     bindings.add_argument("--policy")
@@ -495,10 +450,6 @@ def main(argv=None):
             try:
                 manifest = _load_json(arguments.manifest, "manifest_unreadable")
                 findings = _manifest_findings(manifest)
-                if arguments.eval_result:
-                    findings.extend(check_evaluation_binding(manifest, arguments.eval_result))
-                if arguments.host_evidence_dir:
-                    findings.extend(check_host_bindings(manifest, arguments.host_evidence_dir))
                 if all(package_values):
                     findings.extend(check_package_binding(manifest, arguments.archive, arguments.receipt, arguments.policy))
                 result = _result(findings)

@@ -104,28 +104,6 @@
       ]
     },
     {
-      "id": "contract-reconciliation-tuning-positive",
-      "kind": "positive",
-      "prompt": "For this project, establish or revise the engineering contract through substantial iterative delivery.",
-      "should_trigger": true,
-      "reason": "The tuning positive requests engineering-contract work through substantial iterative delivery, so selected and entrypoint_loaded must both be true.",
-      "required_observations": [
-        "selected",
-        "entrypoint_loaded"
-      ]
-    },
-    {
-      "id": "contract-reconciliation-tuning-near-miss",
-      "kind": "near_miss",
-      "prompt": "For this project, make one bounded factual correction without substantial iterative delivery.",
-      "should_trigger": false,
-      "reason": "The tuning near miss is one bounded factual correction without an iterative workflow, so selected and entrypoint_loaded must both be false.",
-      "required_observations": [
-        "selected",
-        "entrypoint_loaded"
-      ]
-    },
-    {
       "id": "contract-reconciliation-heldout-positive",
       "kind": "positive",
       "prompt": "Please establish or revise the engineering contract through substantial iterative delivery for this project.",

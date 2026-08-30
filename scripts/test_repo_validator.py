@@ -57,49 +57,7 @@ class RepositoryValidatorTests(unittest.TestCase):
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps(payload), encoding="utf-8")
 
-    @staticmethod
-    def host_payload() -> dict[str, object]:
-        steps = []
-        for step_id in validator.HOST_LIFECYCLE_STEP_IDS:
-            steps.append(
-                {
-                    "id": step_id,
-                    "command": {"argv": ["fixture"], "cwd": "fixture", "exit_code": 0},
-                    "result": "failed" if step_id == "collision" else "passed",
-                    "postcondition": {
-                        "check_argv": ["fixture"],
-                        "expected": "fixture",
-                        "observed": "fixture",
-                        "passed": True,
-                    },
-                    "raw_evidence": {
-                        "command_output": {
-                            "path": None,
-                            "status": "unavailable",
-                            "sha256": None,
-                            "bytes": None,
-                            "reason": "fixture unavailable",
-                        },
-                        "postcondition_readback": {
-                            "path": None,
-                            "status": "unavailable",
-                            "sha256": None,
-                            "bytes": None,
-                            "reason": "fixture unavailable",
-                        },
-                    },
-                }
-            )
-        return {
-            "schema_version": 2,
-            "host": "Codex Desktop/CLI",
-            "observed_version": "fixture 1.2.3",
-            "independent_reviewer": "fixture",
-            "independent": True,
-            "overall_status": "failed",
-            "runtime_revision": None,
-            "lifecycle_steps": steps,
-        }
+
 
     def test_json_parent_guards_report_findings_without_tracebacks(self) -> None:
         """Break caught: removing object checks before validator field access."""
@@ -116,24 +74,7 @@ class RepositoryValidatorTests(unittest.TestCase):
                 validator.validate_release_policy(errors)
                 self.assertTrue(errors)
 
-    def test_nested_host_json_guards_report_findings_without_tracebacks(self) -> None:
-        """Break caught: indexing nested host objects before their type check."""
-        root = self.with_root()
-        artifact = root / "evaluation/evidence/hosts/codex-desktop-cli.json"
-        artifact.parent.mkdir(parents=True)
-        for payload in ({}, {"lifecycle_steps": ["not an object"]}):
-            with self.subTest(payload=payload):
-                artifact.write_text(json.dumps(payload), encoding="utf-8")
-                errors: list[str] = []
-                validator.validate_lifecycle_artifact(
-                    "Codex Desktop/CLI",
-                    "failed",
-                    "fixture 1.2.3",
-                    "[fixture](evaluation/evidence/hosts/codex-desktop-cli.json)",
-                    root,
-                    errors,
-                )
-                self.assertTrue(errors)
+
 
     def test_exact_json_integer_fields_reject_booleans_and_floats(self) -> None:
         """Break caught: accepting Python bool/float where JSON requires int."""
@@ -175,9 +116,9 @@ class RepositoryValidatorTests(unittest.TestCase):
                 self.assertIn("runtime manifest files 1 bytes must be an integer", errors)
 
     def test_all_aggregate_json_entrypoints_fail_closed_for_top_level_shapes(self) -> None:
-        """Break caught: any aggregate JSON loader calls methods on a scalar."""
+        """Break caught: any current aggregate JSON loader calls methods on a scalar."""
         values = ([], {}, "scalar", 9, True, None)
-        for name in ("evaluation", "policy", "manifest", "host"):
+        for name in ("evaluation", "policy", "manifest"):
             for payload in values:
                 with self.subTest(entrypoint=name, payload=repr(payload)):
                     root = self.with_root()
@@ -188,25 +129,13 @@ class RepositoryValidatorTests(unittest.TestCase):
                     elif name == "policy":
                         self.write_json(root, "release-policy.json", payload)
                         validator.validate_release_policy(errors)
-                    elif name == "manifest":
+                    else:
                         self.write_json(root, "evaluation/runtime-manifest.json", payload)
                         validator.validate_runtime_manifest(errors)
-                    else:
-                        artifact = root / "evaluation/evidence/hosts/codex-desktop-cli.json"
-                        artifact.parent.mkdir(parents=True)
-                        artifact.write_text(json.dumps(payload), encoding="utf-8")
-                        validator.validate_lifecycle_artifact(
-                            "Codex Desktop/CLI",
-                            "failed",
-                            "fixture 1.2.3",
-                            "[fixture](evaluation/evidence/hosts/codex-desktop-cli.json)",
-                            root,
-                            errors,
-                        )
                     self.assertTrue(errors)
 
     def test_all_aggregate_json_entrypoints_fail_closed_for_nested_shapes(self) -> None:
-        """Break caught: nested JSON objects/lists are indexed before guards."""
+        """Break caught: current nested JSON objects/lists are indexed before guards."""
         evaluation = json.loads(
             (self.repository_root / "evaluation/eval-spec.json").read_text(encoding="utf-8")
         )
@@ -219,8 +148,6 @@ class RepositoryValidatorTests(unittest.TestCase):
             ("evaluation", {"behavior_cases": [None]}),
             ("policy", {"suffix_allowlists": [], "limits": [], "secret_scan": []}),
             ("manifest", {"files": ["not an object", {"bytes": True}, {"bytes": 1.0}]}),
-            ("host", {"lifecycle_steps": ["not an object"] + RepositoryValidatorTests.host_payload()["lifecycle_steps"][1:]}),
-            ("host", {"lifecycle_steps": [{**RepositoryValidatorTests.host_payload()["lifecycle_steps"][0], "command": []}] + RepositoryValidatorTests.host_payload()["lifecycle_steps"][1:]}),
         )
         for name, changes in cases:
             with self.subTest(entrypoint=name, changes=changes):
@@ -236,87 +163,10 @@ class RepositoryValidatorTests(unittest.TestCase):
                     payload.update(changes)
                     self.write_json(root, "release-policy.json", payload)
                     validator.validate_release_policy(errors)
-                elif name == "manifest":
+                else:
                     self.write_json(root, "evaluation/runtime-manifest.json", changes)
                     validator.validate_runtime_manifest(errors)
-                else:
-                    artifact = root / "evaluation/evidence/hosts/codex-desktop-cli.json"
-                    artifact.parent.mkdir(parents=True)
-                    payload = self.host_payload()
-                    payload.update(changes)
-                    artifact.write_text(json.dumps(payload), encoding="utf-8")
-                    validator.validate_lifecycle_artifact(
-                        "Codex Desktop/CLI",
-                        "failed",
-                        "fixture 1.2.3",
-                        "[fixture](evaluation/evidence/hosts/codex-desktop-cli.json)",
-                        root,
-                        errors,
-                    )
                 self.assertTrue(errors)
-
-    def test_host_integer_fields_reject_boolean_and_float_without_indexing(self) -> None:
-        """Break caught: lifecycle integer fields accept bool/float as exact integers."""
-        root = self.with_root()
-        artifact = root / "evaluation/evidence/hosts/codex-desktop-cli.json"
-        artifact.parent.mkdir(parents=True)
-        for invalid in (True, 0.0):
-            with self.subTest(exit_code=repr(invalid)):
-                payload = self.host_payload()
-                payload["lifecycle_steps"][0]["command"]["exit_code"] = invalid
-                artifact.write_text(json.dumps(payload), encoding="utf-8")
-                errors: list[str] = []
-                validator.validate_lifecycle_artifact(
-                    "Codex Desktop/CLI",
-                    "failed",
-                    "fixture 1.2.3",
-                    "[fixture](evaluation/evidence/hosts/codex-desktop-cli.json)",
-                    root,
-                    errors,
-                )
-                self.assertTrue(
-                    any("lifecycle command schema is invalid" in error for error in errors),
-                    errors,
-                )
-
-    def test_host_loader_reaches_exact_schema_children(self) -> None:
-        """Break caught: a wrong artifact path masks malformed host children."""
-        root = self.with_root()
-        artifact = root / "evaluation/evidence/hosts/codex-desktop-cli.json"
-        artifact.parent.mkdir(parents=True)
-        mutations = (
-            ([], "does not match the exact schema"),
-            ("scalar-step", "lifecycle step schema is invalid"),
-            ("bad-command", "lifecycle command schema is invalid"),
-            ("bad-postcondition", "lifecycle postcondition schema is invalid"),
-            ("bad-raw", "raw evidence schema is invalid"),
-        )
-        for mutation, finding in mutations:
-            with self.subTest(mutation=mutation):
-                payload = self.host_payload()
-                if mutation == []:
-                    payload = []
-                elif mutation == "scalar-step":
-                    payload["lifecycle_steps"][0] = "not an object"
-                elif mutation == "bad-command":
-                    payload["lifecycle_steps"][0]["command"] = []
-                elif mutation == "bad-postcondition":
-                    payload["lifecycle_steps"][0]["postcondition"] = []
-                elif mutation == "bad-raw":
-                    payload["lifecycle_steps"][0]["raw_evidence"] = []
-                else:
-                    payload.update(mutation)
-                artifact.write_text(json.dumps(payload), encoding="utf-8")
-                errors: list[str] = []
-                validator.validate_lifecycle_artifact(
-                    "Codex Desktop/CLI",
-                    "failed",
-                    "fixture 1.2.3",
-                    "[fixture](evaluation/evidence/hosts/codex-desktop-cli.json)",
-                    root,
-                    errors,
-                )
-                self.assertTrue(any(finding in error for error in errors), errors)
 
     def test_markdown_rejects_unsafe_destinations_before_resolution(self) -> None:
         """Break caught: normalizing an unsafe local target into an accepted path."""
@@ -388,7 +238,6 @@ class RepositoryValidatorTests(unittest.TestCase):
         """Break caught: omitting a README-listed verifier from aggregate checks."""
         entrypoints = (
             "scripts/test_runtime_revision.py",
-            "scripts/test_host_support_validator.py",
             "scripts/test_control_evidence_validator.py",
             "scripts/test_repo_validator.py",
             "scripts/runtime_revision.py",
@@ -824,29 +673,7 @@ fenced-looking comment text
                 )
                 self.assertNotIn("Traceback", completed.stderr)
 
-    def test_host_raw_evidence_channels_reach_child_record_guards(self) -> None:
-        """Break caught: raw-channel mutation stops at its parent schema guard."""
-        root = self.with_root()
-        artifact = root / "evaluation/evidence/hosts/codex-desktop-cli.json"
-        artifact.parent.mkdir(parents=True)
-        for channel in ("command_output", "postcondition_readback"):
-            with self.subTest(channel=channel):
-                payload = self.host_payload()
-                payload["lifecycle_steps"][0]["raw_evidence"][channel] = []
-                artifact.write_text(json.dumps(payload), encoding="utf-8")
-                errors: list[str] = []
-                validator.validate_lifecycle_artifact(
-                    "Codex Desktop/CLI",
-                    "failed",
-                    "fixture 1.2.3",
-                    "[fixture](evaluation/evidence/hosts/codex-desktop-cli.json)",
-                    root,
-                    errors,
-                )
-                self.assertTrue(
-                    any("raw evidence record is invalid" in error for error in errors),
-                    errors,
-                )
+
 
     def test_markdown_nul_and_file_uris_fail_closed_through_aggregate_main(self) -> None:
         """Break caught: decoded NUL/file URI escapes containment or traceback."""
@@ -962,7 +789,7 @@ python3 -B ./scripts/dot_validator.py
         entrypoints = tuple(sorted(validator.documented_verifier_entrypoints(
             (self.repository_root / "README.md").read_text(encoding="utf-8")
         )))
-        self.assertEqual(len(entrypoints), 7)
+        self.assertEqual(len(entrypoints), 5)
         for missing in entrypoints:
             with self.subTest(missing=missing), tempfile.TemporaryDirectory() as temporary:
                 root = Path(temporary) / "repository"

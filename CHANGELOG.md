@@ -5,6 +5,17 @@ Versioning through Git tags.
 
 ## Unreleased
 
+### Cleanup round
+
+- Removed completed Superpowers plans/specification, superseded routing-tuning
+  samples and their dedicated validator suite, and uninstantiated host raw-
+  evidence/lifecycle scaffolding plus synthetic tests.
+- Replaced the historical architecture-heavy README with the concise current
+  runtime, evidence, validation, host-limit, and repository contract.
+- Preserved the canonical runtime, runtime identity and package checks,
+  repository safety tests, no-Skill pressure controls, and final held-out routing
+  evidence because each still has a demonstrated current consumer.
+
 ### Round 1 planning state
 
 - Implemented Proposal 3's fail-closed repository-validator boundaries and
