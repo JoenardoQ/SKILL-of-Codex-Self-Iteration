@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "domain": "self-iteration/runtime-revision/v1",
+  "algorithm": "sha256",
+  "runtime_root": "self-iteration",
+  "files": [
+    {
+      "path": "SKILL.md",
+      "mode": "0644",
+      "bytes": 8220,
+      "sha256": "40c410d1a9d5a4a20452e0714427c4924da91ad8202413a8b2b11d9496652d98"
+    },
+    {
+      "path": "agents/openai.yaml",
+      "mode": "0644",
+      "bytes": 305,
+      "sha256": "2a9f4224d708fbb67f8e48e6383d3f1c34cd22d50b4899dcd324e992efb062de"
+    },
+    {
+      "path": "assets/iteration-state.md",
+      "mode": "0644",
+      "bytes": 2975,
+      "sha256": "ab40f3b3743f955ff837f063a96e48a256fa284dd0250ba2fe8bb484312b3d16"
+    },
+    {
+      "path": "references/final-round.md",
+      "mode": "0644",
+      "bytes": 5135,
+      "sha256": "aab16f9858c2c311abb5e73a6fb3c99f33379232c5ba8b99853589503a5b0a4d"
+    },
+    {
+      "path": "references/review-matrix.md",
+      "mode": "0644",
+      "bytes": 7604,
+      "sha256": "e0a43ad6f1d868ce54a9c6d68dac9b30504adf90b19f31392cd776ccab5daa72"
+    },
+    {
+      "path": "references/round-protocol.md",
+      "mode": "0644",
+      "bytes": 10422,
+      "sha256": "cc23cb6c0011172ddff24439eb248e85a01e885cbda245929d40f51591d79fd5"
+    }
+  ],
+  "runtime_revision": "sha256:531e531dda519c66add72150514fe36d2000eaa82c270e0de05d87abdb725978"
+}

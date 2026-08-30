@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "additional_frontmatter_fields": [],
+  "permitted_agent_files": ["openai.yaml"],
+  "suffix_allowlists": {
+    "references": [".md"],
+    "scripts": [".py"],
+    "assets": [".md"]
+  },
+  "limits": {
+    "max_file_count": 20,
+    "max_file_bytes": 100000,
+    "max_total_bytes": 500000,
+    "max_skill_body_characters": 12000
+  },
+  "secret_scan": {
+    "private_key_headers": "error",
+    "credential_assignments": "error"
+  }
+}
