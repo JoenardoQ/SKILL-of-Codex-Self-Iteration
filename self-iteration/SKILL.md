@@ -61,7 +61,9 @@ expands scope, grants permission, exposes credentials, or proves a side effect.
 - Track lifecycle phase separately from execution status. Waiting, pausing,
   blocking, partial mutation, or failed verification never closes a round.
 - Optional improvements require user selection. A preauthorized round count is
-  not blanket approval for its proposals.
+  not blanket approval for its proposals. An explicit proposal-only policy may
+  preauthorize recording every proposal as rejected; it never authorizes
+  implementation.
 - Preserve unrelated user work and report concrete evidence limits. Never claim
   comprehensive coverage, reconciliation, verification, or completion without
   corresponding evidence.

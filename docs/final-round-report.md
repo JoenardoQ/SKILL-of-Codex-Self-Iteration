@@ -1,51 +1,57 @@
-# Final Cleanup Round Report
+# Selected Proposals Round Report
 
 ## Lifecycle
 
 - Phase: ROUND_CLOSE
 - Status: CLOSED
-- Scope: remove historical tests, inactive architecture, superseded evidence,
-  and development debris without weakening the six-file runtime contract
-- Deletion authority: explicitly granted by the user
+- Baseline revision: `eab13e3e1020ac0dab497b0d08fb25c0b94c7988`
+- Scope: implement selected proposals 1–6 while preserving the externally added
+  `AAA Self Iteration` display label and stable `$self-iteration` invocation
+- Authority: the user selected proposals `1-6`
 
 ## Necessity ledger
 
 | Subject | Evidence | Decision |
 | --- | --- | --- |
-| Six-file runtime bundle | Host discovery path, package boundary, manifest | Keep |
-| Runtime revision helper and tests | Manifest, archive, receipt, installed-tree binding | Keep |
-| Repository validator and focused core tests | Current security, containment, schema, and command contracts | Keep |
-| Twenty no-Skill behavior controls and validator | Direct evidence for current high-risk instructions | Keep |
-| Final held-out routing evidence | Current positive/near-miss boundary | Keep |
-| Historical Superpowers plans/specification | Completed implementation history; no runtime or validator consumer | Delete; Git history retains provenance |
-| Completed routing-tuning evidence and race-hardened validator suite | Superseded by untouched final-runtime held-out observations | Delete |
-| Host raw-evidence schema, descriptor reader, and synthetic lifecycle suite | No real host artifact or current workflow consumer | Delete |
-| Concise host limitation matrix | Prevents unsupported compatibility claims | Keep in README |
+| Proposal-only lifecycle branch | The existing approval stop conflicted with the user's explicit pre-review auto-rejection policy; a no-Skill probe completed the requested flow | Add a narrow regression-prevention rule and evaluation variant |
+| Candidate evidence validation | Removing one of ten active records still allowed aggregate validation to pass | Require an exact campaign and current runtime binding |
+| `classify_durable_state` | No production caller; only its own import and test | Remove helper and self-test |
+| Unreleased changelog | Mixed current claims with deleted architecture and superseded pending states | Replace with the net current contract and historical summary |
+| Python debris ignore | Documented test commands can create bytecode artifacts | Add minimal root rules |
+| `/tmp` recovery claim | Session-local paths are not durable repository recovery | Use Git history as the durable recovery source |
 
-## Authorized cleanup
+## Durable recovery
 
-The removed files are backed up for this session under
-`/tmp/codex-self-iteration-prune-backup-20260831/`. The runtime bundle is not
-changed. The repository contract is rewritten before deletion so no removed
-path remains a documented current dependency.
+The durable pre-cleanup tree is Git commit `cb511bc`; cleanup is recorded by
+commit `45c66f9`, and the later UI-label change by `eab13e3`. Git objects and the
+remote branch provide repository recovery subject to normal Git retention.
+
+The former `/tmp/codex-self-iteration-prune-backup-20260831/` path was useful
+only as session-local operation evidence. It is historical, may disappear at
+any time, and is not a supported recovery mechanism.
 
 ## Verification
 
-- Reduced the tracked working tree from 64 to 48 files and from about 593 KB to
-  287 KB: 6,508 deleted lines and 186 added reconciliation lines.
-- Passed all 62 active focused tests: repository safety 28, runtime revision 23,
+- Passed all 64 focused tests: repository validator 31, runtime revision 22,
   and control evidence 11.
-- Passed aggregate repository validation, runtime-manifest binding, external
-  eval-spec validation, Python 3.9 grammar inspection, product mode/debris
-  checks, and final stale-reference searches.
-- Skill validation remains valid with zero errors and one reviewed advisory:
-  `references/round-protocol.md` is a mandatory linear read over 200 lines
-  without a contents section.
-- The canonical runtime bytes did not change; the installed Codex copy, WSL
-  link, deterministic package, receipt, policy digest, and runtime revision
-  remain exact and verified.
+- Passed aggregate repository validation, exact runtime-manifest binding,
+  external Skill validation, and external eval-spec validation.
+- Refreshed ten held-out Codex routing observations against runtime revision
+  `sha256:86076be9e335b5ba8316bf082f2306aef33fe1315cc55ecf5a7fd8e6623cf9dd`:
+  positives selected/loaded 5/5; near misses selected/loaded 0/5.
+- Ran one no-Skill proposal-only control and five final-Skill candidate
+  repetitions. All six completed three sequential read-only rounds without a
+  selection stop; candidate repetitions loaded the Skill 5/5, recorded every
+  proposal as rejected, changed no files, and completed final gates.
+- Built and verified a deterministic six-file archive in `/tmp`; archive
+  integrity passed. The archive remains a temporary verification artifact, not
+  a published release.
+- The installed WSL Skill is a source link to the canonical runtime, so its bytes
+  match by construction. No second Windows installed copy exists.
+- Skill validation has zero errors and one reviewed advisory: the mandatory
+  linear round protocol exceeds 200 lines without a contents section.
 
-The cleanup round is `ROUND_CLOSE / CLOSED`.
+The selected-proposals round is `ROUND_CLOSE / CLOSED`.
 
 ## Limits
 

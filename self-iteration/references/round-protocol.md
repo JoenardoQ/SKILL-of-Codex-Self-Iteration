@@ -111,6 +111,16 @@ When the user rejects every proposal, record the decision, restore status to
 `ACTIVE`, skip `DOC_UPDATE` and `IMPLEMENT`, and continue through reconciliation,
 verification, and any required final gates. Rejection is not a blocker.
 
+If, before review, the user explicitly requests proposal-only rounds and directs
+that every proposal be recorded as rejected, treat that direction as the
+proposal decision for each authorized round. Complete the fresh review and full
+proposal set, record the rejection, skip `DOC_UPDATE` and `IMPLEMENT`, then run
+read-only reconciliation, verification, final gates when applicable, and close
+the round before beginning the next. Do not ask for selection under that policy,
+and do not divide one review into artificial proposal batches to fill the round
+count. Without this explicit rejection policy, proposals still stop at
+`USER_APPROVAL / WAITING_USER`.
+
 A round with no justified proposal still records full coverage, verification or
 inspection evidence, risks, and closing evidence. It counts toward the authorized
 number. Continue to the next authorized round after closure unless the user

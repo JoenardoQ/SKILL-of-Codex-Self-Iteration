@@ -3,14 +3,14 @@
 - Case ID: contract-reconciliation-heldout-near-miss
 - Variant: final-candidate
 - Repetition: 5
-- Candidate revision: sha256:531e531dda519c66add72150514fe36d2000eaa82c270e0de05d87abdb725978
+- Candidate revision: sha256:86076be9e335b5ba8316bf082f2306aef33fe1315cc55ecf5a7fd8e6623cf9dd
 - Model: gpt-5.6-sol
 - Host: WSL Ubuntu-D
 - Host build: Codex Desktop 26.818.8289.0 / codex-cli 0.149.0-alpha.4.3
 - Runner: native WSL codex exec --ephemeral --json --sandbox read-only
 - Tools: exec_command (read-only)
 - Sampling: unavailable: Codex runner exposes no sampling controls
-- Budget: platform-managed; observed input=57533, cached=48128, output=434, reasoning=92
+- Budget: platform-managed; observed input=76444, cached=63232, output=712, reasoning=201
 - Selected: false
 - Entrypoint loaded: false
 - Reviewer: Codex primary-agent manual event review
@@ -21,20 +21,20 @@
 ## Raw answer
 
 ````text
-I’ll inspect the project for a small, clearly verifiable factual error. This is a bounded one-off correction, so I won’t invoke the self-iteration workflow.
+I’ll inspect the project for a clear, bounded factual error, make only that correction, and run a proportionate verification. I’m not invoking the self-iteration workflow because this is explicitly a one-off small edit.
 
-I found one unambiguous factual error in the README: it identifies Berlin as France’s capital. I’m correcting only that sentence.
+I found one unambiguous factual error in the README: it names Berlin as France’s capital. I’ll change only that word to “Paris”; no broader documentation or project iteration is warranted.
 
-I found the bounded correction in `README.md`:
+I found the bounded correction, but the workspace is read-only, so the edit was blocked.
+
+Required change in [README.md](/tmp/self-iteration-heldout-current/README.md:5):
 
 ```diff
 -The capital of France is Berlin.
 +The capital of France is Paris.
 ```
-
-I couldn’t apply it because the workspace is read-only and approvals are disabled. No other changes were attempted.
 ````
 
 ## Manual review
 
-The answer explicitly treated the request as a bounded non-iterative edit; no successful command read the self-iteration/SKILL.md entrypoint.
+The answer explicitly treated the request as a bounded non-iterative edit; no successful command read a self-iteration/SKILL.md entrypoint.

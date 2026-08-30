@@ -22,7 +22,6 @@ from runtime_revision import (  # noqa: E402
     calculate_revision,
     check_manifest,
     check_package_binding,
-    classify_durable_state,
     inventory_checkout,
     inventory_zip,
     manifest_for_checkout,
@@ -341,13 +340,6 @@ class ManifestAndBindingTests(unittest.TestCase):
                 "validation": {},
             }), encoding="utf-8")
             self.assertEqual(check_package_binding(manifest, archive, receipt, policy), [])
-
-    def test_durable_legacy_state_is_unknown_but_safe_revalidated_resume_is_allowed(self):
-        legacy = {"Phase": "IMPLEMENT"}
-        classified = classify_durable_state(legacy, revalidated=True)
-        self.assertEqual(classified["source"], "unknown")
-        self.assertFalse(classified["provenance_established"])
-        self.assertTrue(classified["safe_resume_allowed"])
 
     def test_cli_rejects_partial_optional_package_group_with_json_finding(self):
         completed = subprocess.run(

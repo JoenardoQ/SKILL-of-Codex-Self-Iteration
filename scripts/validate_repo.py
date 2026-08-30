@@ -15,6 +15,7 @@ from runtime_revision import check_manifest
 
 ROOT = Path(__file__).resolve().parents[1]
 REQUIRED_FILES = (
+    ".gitignore",
     "CHANGELOG.md",
     "LICENSE",
     "README.md",
@@ -199,6 +200,9 @@ EVALUATION_BEHAVIOR_FIELDS = {
 }
 CONTROL_EVIDENCE_DIRECTORY = Path("evaluation/evidence/control")
 CONTROL_REPETITIONS = range(1, 6)
+CANDIDATE_EVIDENCE_DIRECTORY = Path("evaluation/evidence/candidate")
+CANDIDATE_REPETITIONS = range(1, 6)
+CANDIDATE_CASE_IDS = ROUTING_HELDOUT_CASE_IDS
 CONTROL_METADATA = {
     "Model": "gpt-5.6-terra",
     "Runner": "Codex isolated subagent",
@@ -1445,6 +1449,138 @@ def validate_control_evidence(errors: list[str], root: Optional[Path] = None) ->
             validate_control_sample_text(case_id, repetition, text, errors)
 
 
+def validate_candidate_sample_text(
+    case_id: str,
+    repetition: int,
+    text: str,
+    runtime_revision: str,
+    errors: list[str],
+) -> None:
+    """Validate the compact final-runtime routing observation contract."""
+    label = f"{case_id}-r{repetition}.md"
+    lines = text.splitlines()
+    if not lines or lines[0] != "# Final candidate held-out routing observation":
+        errors.append(f"candidate evidence {label} has an invalid title")
+
+    visible, constructs_closed = visible_markdown_document(text)
+    visible_by_number = dict(visible)
+    raw_headings = [number for number, line in visible if line == "## Raw answer"]
+    review_headings = [number for number, line in visible if line == "## Manual review"]
+    if (
+        not constructs_closed
+        or len(raw_headings) != 1
+        or len(review_headings) != 1
+        or raw_headings[0] >= review_headings[0]
+    ):
+        errors.append(
+            f"candidate evidence {label} requires one visible Raw answer H2 followed by one visible Manual review H2 and closed Markdown constructs"
+        )
+        return
+    raw_heading, review_heading = raw_headings[0], review_headings[0]
+
+    metadata_pattern = re.compile(r"^- ([A-Za-z][A-Za-z ]+):[ \t]*(\S.*)$")
+    metadata: dict[str, str] = {}
+    for number in range(2, raw_heading):
+        physical = lines[number - 1]
+        if not physical:
+            continue
+        if visible_by_number.get(number) != physical:
+            errors.append(f"candidate evidence {label} metadata must be visible")
+            continue
+        match = metadata_pattern.fullmatch(physical)
+        if not match:
+            errors.append(f"candidate evidence {label} has malformed metadata content")
+            continue
+        field, value = match.groups()
+        if field in metadata:
+            errors.append(f"candidate evidence {label} duplicates metadata {field}")
+        metadata[field] = value
+
+    positive = case_id.endswith("-positive")
+    expected = {
+        "Case ID": case_id,
+        "Variant": "final-candidate",
+        "Repetition": str(repetition),
+        "Candidate revision": runtime_revision,
+        "Selected": str(positive).lower(),
+        "Entrypoint loaded": str(positive).lower(),
+        "Verdict": "pass",
+        "Evidence status": "active",
+    }
+    for field, value in expected.items():
+        if metadata.get(field) != value:
+            errors.append(f"candidate evidence {label} metadata {field} must be {value}")
+
+    body = lines[raw_heading:review_heading - 1]
+    nonempty = [line for line in body if line.strip()]
+    if len(nonempty) < 3:
+        errors.append(f"candidate evidence {label} has an empty fenced raw answer")
+    else:
+        opening = re.fullmatch(r"(`{3,}|~{3,})[^`~]*", nonempty[0])
+        if opening is None or nonempty[-1] != opening.group(1):
+            errors.append(f"candidate evidence {label} raw answer must use one closed fence")
+        elif not any(line.strip() for line in nonempty[1:-1]):
+            errors.append(f"candidate evidence {label} has an empty fenced raw answer")
+    if not any(line.strip() for line in lines[review_heading:]):
+        errors.append(f"candidate evidence {label} has an empty manual review")
+
+
+def validate_candidate_evidence(errors: list[str], root: Optional[Path] = None) -> None:
+    """Require the exact 2-by-5 held-out campaign bound to the current runtime."""
+    validation_root = ROOT if root is None else root
+    evidence_root = validation_root / CANDIDATE_EVIDENCE_DIRECTORY
+    manifest_path = validation_root / "evaluation/runtime-manifest.json"
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        runtime_revision = manifest["runtime_revision"]
+    except (OSError, UnicodeError, json.JSONDecodeError, KeyError, TypeError):
+        errors.append("candidate evidence cannot resolve the current runtime revision")
+        return
+    if not isinstance(runtime_revision, str):
+        errors.append("candidate evidence cannot resolve the current runtime revision")
+        return
+
+    expected = {
+        f"{case_id}-r{repetition}.md"
+        for case_id in CANDIDATE_CASE_IDS
+        for repetition in CANDIDATE_REPETITIONS
+    }
+    actual: set[str] = set()
+    unexpected: list[str] = []
+    if evidence_root.is_symlink():
+        errors.append("candidate evidence directory must not be a symlink")
+    elif evidence_root.is_dir():
+        for path in evidence_root.iterdir():
+            if path.is_symlink() or not path.is_file() or path.suffix != ".md":
+                unexpected.append(path.name)
+            else:
+                actual.add(path.name)
+    if actual != expected:
+        missing = sorted(expected - actual)
+        unexpected.extend(sorted(actual - expected))
+        if missing:
+            errors.append(f"candidate evidence is missing samples: {', '.join(missing)}")
+    if unexpected:
+        errors.append(
+            f"candidate evidence has unexpected entries: {', '.join(sorted(set(unexpected)))}"
+        )
+
+    for case_id in CANDIDATE_CASE_IDS:
+        for repetition in CANDIDATE_REPETITIONS:
+            filename = f"{case_id}-r{repetition}.md"
+            path = evidence_root / filename
+            if path.is_symlink() or not path.is_file():
+                continue
+            try:
+                text = path.read_text(encoding="utf-8")
+            except (OSError, UnicodeError) as exc:
+                errors.append(f"cannot read candidate evidence {filename}: {exc}")
+                continue
+            validate_candidate_sample_text(
+                case_id, repetition, text, runtime_revision, errors
+            )
+
+
 def validate_documented_structure(errors: list[str]) -> None:
     readme = read_text("README.md", errors)
     for relative in REQUIRED_FILES:
@@ -1541,6 +1677,7 @@ def main() -> int:
     validate_evaluations(errors)
     validate_runtime_manifest(errors)
     validate_control_evidence(errors)
+    validate_candidate_evidence(errors)
     validate_documented_structure(errors)
     validate_documented_verifier_entrypoints(errors)
     if errors:

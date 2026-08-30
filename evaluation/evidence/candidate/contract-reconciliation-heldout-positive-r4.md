@@ -3,14 +3,14 @@
 - Case ID: contract-reconciliation-heldout-positive
 - Variant: final-candidate
 - Repetition: 4
-- Candidate revision: sha256:531e531dda519c66add72150514fe36d2000eaa82c270e0de05d87abdb725978
+- Candidate revision: sha256:86076be9e335b5ba8316bf082f2306aef33fe1315cc55ecf5a7fd8e6623cf9dd
 - Model: gpt-5.6-sol
 - Host: WSL Ubuntu-D
 - Host build: Codex Desktop 26.818.8289.0 / codex-cli 0.149.0-alpha.4.3
 - Runner: native WSL codex exec --ephemeral --json --sandbox read-only
 - Tools: exec_command (read-only)
 - Sampling: unavailable: Codex runner exposes no sampling controls
-- Budget: platform-managed; observed input=66508, cached=55296, output=733, reasoning=155
+- Budget: platform-managed; observed input=149854, cached=118784, output=2530, reasoning=1329
 - Selected: true
 - Entrypoint loaded: true
 - Reviewer: Codex primary-agent manual event review
@@ -21,23 +21,25 @@
 ## Raw answer
 
 ````text
-I’m using the self-iteration skill because this request is specifically about documentation-first, substantial iterative delivery. I’ll first inspect its workflow and the project’s current state, then establish the contract and proceed only through the optimization rounds that workflow authorizes.
+I’m using the self-iteration skill because this request calls for a documentation-first engineering contract and substantial, reviewable delivery rounds. I’ll first inspect the project and the skill’s required workflow, then establish the contract before changing implementation.
 
-The project is effectively a new, documentation-only repository (one README and no Git metadata). I’m treating the baseline as contract establishment; no optimization-round count was supplied, so the skill requires stopping after the verified baseline and asking before opening any round.
+The lifecycle contract distinguishes baseline reconciliation from optional optimization rounds. No round count was supplied, so I’ll complete the baseline only, verify it, and then ask whether you want to authorize a numbered optimization round. First I’m inventorying instructions, docs, source, tests, dependencies, and current worktree state; any material product ambiguity will come back as a concrete decision rather than an assumption.
 
-Phase: `BASELINE`
-Status: `WAITING_USER`
+The inventory found a minimal existing project: one 87-byte README, no source, tests, dependency manifest, operational configuration, or Git metadata. The README also conflicts internally: it declares a Python 3.12 target but defines no Python behavior, and it states the demonstrably false claim that France’s capital is Berlin. That leaves a material product decision—whether this is intentionally a documentation-only routing fixture or the seed of an executable Python fixture—so I won’t invent an architecture. The workspace is also host-mounted read-only, which blocks committing the contract once that decision is made.
 
-The repository contains only a five-line [README.md](/tmp/self-iteration-heldout-final/README.md), describing a “Routing Fixture,” Python 3.12, and the incorrect statement “The capital of France is Berlin.” There is no source, tests, configuration, or Git metadata.
+Baseline is open at `BASELINE / BLOCKED`.
 
-I need two material decisions before establishing the engineering contract:
+Inventory found only [README.md](/tmp/self-iteration-heldout-current/README.md): no code, tests, dependencies, Git metadata, or operational artifacts. No files were changed because the workspace is read-only.
 
-1. Is this intended to become a Python routing fixture/test project, or does “Routing Fixture” mean something else?
-2. How many optimization rounds should follow the baseline? If unspecified, I will complete only the baseline and request round authorization afterward.
+A material decision is required:
 
-There is also an authority blocker: the workspace is read-only. Resume requires write access to `/tmp/self-iteration-heldout-final` plus clarification of the intended project outcome. No files were changed, and no optimization round has begun.
+1. **Documentation-only fixture (recommended):** define its routing-test purpose, correct France’s capital to Paris, and explicitly exclude executable behavior.
+2. **Python 3.12 fixture:** establish a CLI/API contract, implementation, and tests that return Paris.
+3. **Different purpose:** specify the intended behavior.
+
+To resume, provide your choice and a writable workspace. After baseline delivery and verification, I’ll separately ask whether to authorize optimization round 1; none is currently authorized.
 ````
 
 ## Manual review
 
-The answer explicitly selected self-iteration, and a successful command read the fixture's self-iteration/SKILL.md entrypoint.
+The answer explicitly selected self-iteration, and a successful command read the current fixture's self-iteration/SKILL.md entrypoint.

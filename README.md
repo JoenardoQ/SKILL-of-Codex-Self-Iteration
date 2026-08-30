@@ -18,7 +18,10 @@ The Skill separates baseline delivery from optimization rounds:
 - Each optimization round freshly reviews the whole authorized scope, records
   coverage and necessity, presents every evidence-backed net-positive proposal,
   waits for user selection, updates documentation first, implements approved
-  work, reconciles, verifies, and explicitly closes.
+  work, reconciles, verifies, and explicitly closes. If the user explicitly
+  preauthorizes proposal-only rounds with every proposal recorded as rejected,
+  the Skill skips implementation and completes each round read-only without an
+  additional selection stop.
 - Exactly one round may be active. Waiting, blocking, pausing, or failed
   verification never closes it.
 - The final authorized round additionally performs repository hygiene and a
@@ -110,6 +113,7 @@ collision, upgrade, and uninstall evidence before a compatibility claim.
 ## Repository layout
 
 ```text
+├── .gitignore
 ├── README.md
 ├── CHANGELOG.md
 ├── LICENSE
@@ -158,9 +162,10 @@ python3 "$CODEX_HOME/skills/agent-skill-author/scripts/validate_eval_spec.py" \
 
 The repository validator checks the runtime boundary, frontmatter and adapter
 contract, release policy, Markdown containment, evaluation inventory, current
-control evidence, manifest binding, documented commands, text modes, and secret
-or generated-debris indicators. Preserved raw answers may contain intentional
-Markdown hard-break spaces; other text must not contain trailing whitespace.
+control and candidate-routing evidence, manifest binding, documented commands,
+text modes, and secret or generated-debris indicators. Preserved raw answers
+may contain intentional Markdown hard-break spaces; other text must not contain
+trailing whitespace.
 
 ## Package
 
@@ -180,9 +185,9 @@ and portability require separate evidence and authorization.
 
 ## Status and acceptance
 
-The runtime bundle is implemented, locally installed for Codex, and bound to its
-checked manifest. The cleanup round is `ROUND_CLOSE / CLOSED`; all active focused and
-aggregate checks pass. Acceptance requires:
+The runtime bundle is implemented, locally installed for Codex, and bound to
+its checked manifest. The selected-proposals round is `ROUND_CLOSE / CLOSED`;
+all active focused and aggregate checks pass. Acceptance requires:
 
 - exactly the six documented runtime files and no development debris inside the
   bundle;
@@ -192,4 +197,4 @@ aggregate checks pass. Acceptance requires:
 - current documentation matching the reduced repository tree; and
 - unsupported release, lifecycle, and portability claims remaining explicit.
 
-See `docs/final-round-report.md` for the current cleanup ledger and limitations.
+See `docs/final-round-report.md` for the current round ledger and limitations.

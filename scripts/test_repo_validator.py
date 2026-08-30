@@ -58,6 +58,64 @@ class RepositoryValidatorTests(unittest.TestCase):
         path.write_text(json.dumps(payload), encoding="utf-8")
 
 
+    def copy_candidate_fixture(self) -> Path:
+        root = self.with_root()
+        shutil.copytree(
+            self.repository_root / "evaluation/evidence/candidate",
+            root / "evaluation/evidence/candidate",
+        )
+        manifest = root / "evaluation/runtime-manifest.json"
+        manifest.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(self.repository_root / "evaluation/runtime-manifest.json", manifest)
+        return root
+
+    def test_candidate_evidence_requires_exact_current_campaign(self) -> None:
+        """Break caught: missing or stale held-out files pass aggregate validation."""
+        root = self.copy_candidate_fixture()
+        errors: list[str] = []
+        validator.validate_candidate_evidence(errors, root)
+        self.assertEqual(errors, [])
+
+        missing = (
+            root
+            / "evaluation/evidence/candidate/contract-reconciliation-heldout-positive-r5.md"
+        )
+        missing.unlink()
+        errors = []
+        validator.validate_candidate_evidence(errors, root)
+        self.assertTrue(any("missing samples" in error for error in errors), errors)
+
+    def test_candidate_evidence_rejects_stale_revision_and_bad_verdict(self) -> None:
+        """Break caught: metadata can claim active evidence for another runtime."""
+        root = self.copy_candidate_fixture()
+        sample = (
+            root
+            / "evaluation/evidence/candidate/contract-reconciliation-heldout-near-miss-r1.md"
+        )
+        text = sample.read_text(encoding="utf-8")
+        text = text.replace("- Candidate revision: sha256:", "- Candidate revision: sha256:dead")
+        text = text.replace("- Verdict: pass", "- Verdict: fail")
+        sample.write_text(text, encoding="utf-8")
+        errors: list[str] = []
+        validator.validate_candidate_evidence(errors, root)
+        self.assertTrue(any("Candidate revision" in error for error in errors), errors)
+        self.assertTrue(any("Verdict" in error for error in errors), errors)
+
+    def test_candidate_evidence_rejects_unexpected_and_symlink_entries(self) -> None:
+        """Break caught: extra or linked evidence bypasses the closed inventory."""
+        root = self.copy_candidate_fixture()
+        evidence = root / "evaluation/evidence/candidate"
+        (evidence / "unexpected.md").write_text("# unexpected\n", encoding="utf-8")
+        link = evidence / "linked.md"
+        try:
+            link.symlink_to(
+                evidence / "contract-reconciliation-heldout-positive-r1.md"
+            )
+        except (NotImplementedError, OSError) as exc:
+            self.skipTest(f"symlink unsupported: {exc}")
+        errors: list[str] = []
+        validator.validate_candidate_evidence(errors, root)
+        self.assertTrue(any("unexpected entries" in error for error in errors), errors)
 
     def test_json_parent_guards_report_findings_without_tracebacks(self) -> None:
         """Break caught: removing object checks before validator field access."""

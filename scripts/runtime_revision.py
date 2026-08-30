@@ -390,30 +390,6 @@ def check_package_binding(manifest, archive_path, receipt_path, policy_path):
     return sorted(set(findings))
 
 
-def classify_durable_state(state, revalidated=False):
-    """Classify copied state without guessing provenance from a receipt alone."""
-    if not isinstance(state, dict):
-        state = {}
-    revision = state.get("Skill runtime revision")
-    source = state.get("Runtime revision source")
-    allowed = {
-        "checked development manifest",
-        "independently recomputed verified archive",
-        "host binding",
-        "unknown",
-    }
-    if not _valid_revision(revision) or source not in allowed or source == "unknown":
-        source = "unknown"
-        established = False
-    else:
-        established = True
-    return {
-        "runtime_revision": revision if established else None,
-        "source": source,
-        "provenance_established": established,
-        "safe_resume_allowed": bool(revalidated),
-    }
-
 
 def _result(findings):
     return {"ok": not findings, "findings": sorted(set(findings))}
