@@ -57,16 +57,52 @@ class RepositoryValidatorTests(unittest.TestCase):
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps(payload), encoding="utf-8")
 
+    @staticmethod
+    def candidate_sample(case_id: str, repetition: int, revision: str) -> str:
+        positive = case_id.endswith("-positive")
+        return "\n".join(
+            (
+                "# Final candidate held-out routing observation",
+                "",
+                f"- Case ID: {case_id}",
+                "- Variant: final-candidate",
+                f"- Repetition: {repetition}",
+                f"- Candidate revision: {revision}",
+                f"- Selected: {str(positive).lower()}",
+                f"- Entrypoint loaded: {str(positive).lower()}",
+                "- Verdict: pass",
+                "- Evidence status: active",
+                "",
+                "## Raw answer",
+                "",
+                "```text",
+                "Synthetic routing observation.",
+                "```",
+                "",
+                "## Manual review",
+                "",
+                "Synthetic reviewer decision for validator testing.",
+                "",
+            )
+        )
+
 
     def copy_candidate_fixture(self) -> Path:
         root = self.with_root()
-        shutil.copytree(
-            self.repository_root / "evaluation/evidence/candidate",
-            root / "evaluation/evidence/candidate",
-        )
+        revision = "sha256:" + "1" * 64
+        evidence = root / "evaluation/evidence/candidate"
+        evidence.mkdir(parents=True)
+        for case_id in validator.CANDIDATE_CASE_IDS:
+            for repetition in validator.CANDIDATE_REPETITIONS:
+                (evidence / f"{case_id}-r{repetition}.md").write_text(
+                    self.candidate_sample(case_id, repetition, revision),
+                    encoding="utf-8",
+                )
         manifest = root / "evaluation/runtime-manifest.json"
         manifest.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(self.repository_root / "evaluation/runtime-manifest.json", manifest)
+        manifest.write_text(
+            json.dumps({"runtime_revision": revision}), encoding="utf-8"
+        )
         return root
 
     def test_evaluation_contract_covers_one_off_small_project_near_miss(self) -> None:
@@ -75,6 +111,29 @@ class RepositoryValidatorTests(unittest.TestCase):
             validator.EVALUATION_ROUTING_CASES["one-off-small-project-creation"],
             ("near_miss", False),
         )
+
+    def test_public_checkout_does_not_require_local_experiment_outputs(self) -> None:
+        """A publishable checkout excludes generated evidence and project history."""
+        root = self.with_root()
+        shutil.copytree(
+            self.repository_root,
+            root,
+            dirs_exist_ok=True,
+            ignore=shutil.ignore_patterns(".git", "__pycache__", "*.pyc"),
+        )
+        for relative in (
+            "CHANGELOG.md",
+            "docs/final-round-report.md",
+            "evaluation/runtime-manifest.json",
+        ):
+            path = root / relative
+            if path.exists():
+                path.unlink()
+        shutil.rmtree(root / "evaluation/evidence", ignore_errors=True)
+
+        result = self.run_aggregate(root)
+
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
     def test_candidate_evidence_requires_exact_current_campaign(self) -> None:
         """Break caught: missing or stale held-out files pass aggregate validation."""

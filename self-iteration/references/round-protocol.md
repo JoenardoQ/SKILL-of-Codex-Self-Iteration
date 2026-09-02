@@ -1,5 +1,17 @@
 # Round Protocol
 
+## Contents
+
+- [Definitions](#definitions)
+- [Establish the contract](#establish-the-contract)
+- [Lifecycle phase and execution status](#lifecycle-phase-and-execution-status)
+- [Baseline delivery](#baseline-delivery)
+- [Optimization round](#optimization-round)
+- [Approval and authority](#approval-and-authority)
+- [Durable state and resumption](#durable-state-and-resumption)
+- [Closing conditions](#closing-conditions)
+- [Failure and recovery](#failure-and-recovery)
+
 ## Definitions
 
 A **baseline delivery** creates or reconciles the documented project contract,

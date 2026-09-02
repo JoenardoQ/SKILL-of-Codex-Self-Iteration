@@ -16,7 +16,6 @@ from runtime_revision import check_manifest
 ROOT = Path(__file__).resolve().parents[1]
 REQUIRED_FILES = (
     ".gitignore",
-    "CHANGELOG.md",
     "LICENSE",
     "README.md",
     "self-iteration/SKILL.md",
@@ -26,7 +25,6 @@ REQUIRED_FILES = (
     "self-iteration/references/review-matrix.md",
     "self-iteration/references/round-protocol.md",
     "evaluation/eval-spec.json",
-    "evaluation/runtime-manifest.json",
     "release-policy.json",
     "scripts/test_control_evidence_validator.py",
     "scripts/test_runtime_revision.py",
@@ -1269,7 +1267,10 @@ def validate_evaluations(errors: list[str]) -> None:
 
 
 def validate_runtime_manifest(errors: list[str]) -> None:
-    """Require the checked-in development manifest to describe this runtime."""
+    """Validate a local development manifest when a maintainer generated one."""
+    manifest_path = ROOT / "evaluation/runtime-manifest.json"
+    if not manifest_path.exists() and not manifest_path.is_symlink():
+        return
     text = read_text("evaluation/runtime-manifest.json", errors)
     try:
         manifest = json.loads(text)
@@ -1409,9 +1410,11 @@ def validate_control_sample_text(
 
 
 def validate_control_evidence(errors: list[str], root: Optional[Path] = None) -> None:
-    """Require the complete 4-by-5 no-Skill control campaign and its metadata."""
+    """Validate a complete local no-Skill campaign when one is present."""
     validation_root = ROOT if root is None else root
     evidence_root = validation_root / CONTROL_EVIDENCE_DIRECTORY
+    if not evidence_root.exists() and not evidence_root.is_symlink():
+        return
     expected = {
         f"{case_id}-r{repetition}.md"
         for case_id in EVALUATION_BEHAVIOR_OBSERVATIONS
@@ -1527,9 +1530,11 @@ def validate_candidate_sample_text(
 
 
 def validate_candidate_evidence(errors: list[str], root: Optional[Path] = None) -> None:
-    """Require the exact 2-by-5 held-out campaign bound to the current runtime."""
+    """Validate local held-out evidence when a maintainer generated it."""
     validation_root = ROOT if root is None else root
     evidence_root = validation_root / CANDIDATE_EVIDENCE_DIRECTORY
+    if not evidence_root.exists() and not evidence_root.is_symlink():
+        return
     manifest_path = validation_root / "evaluation/runtime-manifest.json"
     try:
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))

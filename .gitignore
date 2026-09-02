@@ -1,2 +1,17 @@
 __pycache__/
 *.py[cod]
+
+# Project history and generated experiment artifacts are local-only.
+.project-history/
+.experiments/
+evaluation/evidence/
+evaluation/raw/
+evaluation/results/
+evaluation/runtime-manifest.json
+evals/evidence/
+evals/raw/
+evals/results/
+docs/iteration-state.md
+docs/final-round-report.md
+ITERATION_STATE.md
+CHANGELOG.md

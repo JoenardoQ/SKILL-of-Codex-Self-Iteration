@@ -65,30 +65,6 @@ EXPECTED_OBSERVATIONS = {
         "resume_condition_recorded",
     ),
 }
-EXPECTED_RAW_SHA256 = {
-    "authority-denial-and-staleness-r1.md": "e4b49fda881c2ce9d296b5d4e0041a5bfd80e440690909f34a167f5fa11c6e12",
-    "authority-denial-and-staleness-r2.md": "303e081633e80556e00d50ae3bad6c92c5432de26f0c6bb609dec0701aea00e3",
-    "authority-denial-and-staleness-r3.md": "b8316518f4d42e9de25a762402bb29a45f9614ffc781f8b0e80fe5dde93933a0",
-    "authority-denial-and-staleness-r4.md": "736270ca0db79495ac299b96ab29bc457874e1f98da2a1d13435eaa3779a2a36",
-    "authority-denial-and-staleness-r5.md": "cd17952f5042b6f8d7798aaf27e954fcad7963fa50964916c38f35bdfca24ea6",
-    "partial-failure-and-recovery-r1.md": "77d266cd91e84d0b6190a3f38ba25330a75c550331b3a4948c115e541d823c31",
-    "partial-failure-and-recovery-r2.md": "a78a64b1583e5210e6849bb9492ae736c79254ae97305e8ee232ab50920e4cec",
-    "partial-failure-and-recovery-r3.md": "c8b1bdfcc86ca838d70df98e7cb7335249076052acc19740ee3764212a9012a6",
-    "partial-failure-and-recovery-r4.md": "0c650a6c59b3fb609ef9a2ce5e89bc68b9f75f4a8d9ce019441647654be7a881",
-    "partial-failure-and-recovery-r5.md": "49de7c6c1539bc1142590534d583e1cdb904a9af75461d7069a28c13873254bc",
-    "round-integrity-and-proposal-quality-r1.md": "a9fd4d00d9f51ba547b68529732ae5016fb461e861a49bea8f2f992c1db1a5dd",
-    "round-integrity-and-proposal-quality-r2.md": "1bba142b9f8962d31b0d45c5bd08810c36882eb23c63de0b1f17b16f76176f8d",
-    "round-integrity-and-proposal-quality-r3.md": "2ea02c7a9cb6a12f1a001f23812b17e93c5579afa8dcb4d004583f8e8fdee3e1",
-    "round-integrity-and-proposal-quality-r4.md": "e7f504ede0a8ffb5cc1d266d382eb0c43ada75f9b842d5d12739b320784367fe",
-    "round-integrity-and-proposal-quality-r5.md": "7419bde3fa995bac9491bdc0403ace2e6506ae3a7ad93d8dcdfdbb9781e20d79",
-    "untrusted-content-and-credentials-r1.md": "041aab577e1c65048ad41e735fe40ce70e40a4f33a7bd050bd1931b1f45469eb",
-    "untrusted-content-and-credentials-r2.md": "0715fbc40d03a17ca3b2342a7b198972ff110d5b7bdc622dc3e604e6bc3f3f8c",
-    "untrusted-content-and-credentials-r3.md": "d60b2484635d732b58de648d510578d67222c714c7d8c00c7040af6a0cce1839",
-    "untrusted-content-and-credentials-r4.md": "d38f177d6f9b4d5ea1cac3ef7b86d548108d550d35a0a409dcd73181dbaecec8",
-    "untrusted-content-and-credentials-r5.md": "3c90799e49db7c06d7d6e28d5b0be241db0c8b6873b742a413256c2309749c11",
-}
-
-
 def metadata_lines() -> list[str]:
     lines = []
     for field, value in EXPECTED_METADATA:
@@ -149,19 +125,13 @@ class ControlEvidenceValidatorTests(unittest.TestCase):
             EXPECTED_OBSERVATIONS,
         )
 
-    def test_current_corpus_and_raw_hashes(self) -> None:
-        control_root = REPOSITORY_ROOT / "evaluation" / "evidence" / "control"
+    def test_synthetic_sample_and_raw_hash(self) -> None:
+        sample = build_sample()
+        self.assertEqual(self.validation_errors(sample), [])
         self.assertEqual(
-            {path.name for path in control_root.iterdir()}, set(EXPECTED_RAW_SHA256)
+            raw_digest(sample.encode("utf-8")),
+            "23b3ab5bc4aa93c320c46693d85917d010b2b117184b37586fd84e918d416ed8",
         )
-        for path in sorted(control_root.iterdir()):
-            case_id, repetition_text = path.stem.rsplit("-r", 1)
-            errors: list[str] = []
-            validator.validate_control_sample_text(
-                case_id, int(repetition_text), path.read_text(encoding="utf-8"), errors
-            )
-            self.assertEqual(errors, [], path.name)
-            self.assertEqual(raw_digest(path.read_bytes()), EXPECTED_RAW_SHA256[path.name])
 
     def test_semantic_section_decoys_and_order_fail(self) -> None:
         sample = build_sample()
