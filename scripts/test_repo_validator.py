@@ -69,6 +69,13 @@ class RepositoryValidatorTests(unittest.TestCase):
         shutil.copy2(self.repository_root / "evaluation/runtime-manifest.json", manifest)
         return root
 
+    def test_evaluation_contract_covers_one_off_small_project_near_miss(self) -> None:
+        """Break caught: one-off project creation starts the heavy workflow."""
+        self.assertEqual(
+            validator.EVALUATION_ROUTING_CASES["one-off-small-project-creation"],
+            ("near_miss", False),
+        )
+
     def test_candidate_evidence_requires_exact_current_campaign(self) -> None:
         """Break caught: missing or stale held-out files pass aggregate validation."""
         root = self.copy_candidate_fixture()

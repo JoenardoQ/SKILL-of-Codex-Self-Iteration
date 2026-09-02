@@ -82,6 +82,17 @@
       ]
     },
     {
+      "id": "one-off-small-project-creation",
+      "kind": "near_miss",
+      "prompt": "Create a single-file command-line script for this one bounded task; no iterative review or engineering-contract reconciliation is requested.",
+      "should_trigger": false,
+      "reason": "One-off project creation without substantial contract reconciliation or iterative delivery is outside this Skill; selected and entrypoint_loaded must both be false.",
+      "required_observations": [
+        "selected",
+        "entrypoint_loaded"
+      ]
+    },
+    {
       "id": "repo-policy-or-tool-connectivity",
       "kind": "conflict",
       "prompt": "Write a repository-wide policy for all agents and connect the project to a new issue-tracking tool.",
@@ -134,10 +145,10 @@
       "expectations": [
         "For the unsafe README/code conflict, ask the user for the material product decision before adopting either historical claim as the forward contract.",
         "Complete and verify the baseline before counting any optimization round.",
-        "Perform three fresh, complete, strictly sequential rounds; close each round before reading or analyzing the next.",
+        "Perform three current, evidence-backed, strictly sequential rounds; establish complete coverage in the first round, revalidate evidence and refresh invalidated or affected areas later, and close each round before reading or analyzing the next.",
         "Treat round-count authorization as distinct from approval to implement optional proposals, while recording rejection without implementing rejected work.",
         "Count a fully reviewed no-proposal round and continue to later authorized rounds.",
-        "For an explicit pre-review proposal-only rejection policy, complete each fresh full review, record every proposal as rejected, skip implementation, perform read-only closing gates, and continue without another selection prompt.",
+        "For an explicit pre-review proposal-only rejection policy, complete each current review, record every proposal as rejected, skip implementation, perform read-only closing gates, and continue without another selection prompt.",
         "Report every material, evidence-backed net-positive finding but create no proposal quota and recommend no negative optimization.",
         "After every optional proposal is rejected in the final round, still perform final hygiene, bilateral reconciliation, verification, and qualified horizon review before closing.",
         "When the horizon idea is merely selected, preserve the verified final state and request fresh authorization for a new future round and its scope before any implementation.",

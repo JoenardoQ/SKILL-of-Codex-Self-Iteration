@@ -1,11 +1,11 @@
 ---
 name: self-iteration
 description: >-
-  Run documentation-first delivery and complete, user-approved optimization
-  rounds. Use when creating a project, making a substantial feature or
-  architectural change, reconciling documentation with code, or iteratively
-  improving a codebase. Do not use for one-off advice, ordinary small edits,
-  repository-wide conventions, or missing tool connectivity.
+  Use when asked to establish or revise a project's engineering contract
+  through substantial iterative delivery, or when the user explicitly requests
+  multiple user-approved optimization rounds. Do not use for one-off project
+  creation, advice, ordinary small edits, repository-wide conventions, or
+  missing tool connectivity.
 license: MIT
 metadata:
   compatibility: "Targets Codex Desktop/CLI, Claude Code, and Gemini CLI; each host remains unverified until independent lifecycle evidence exists."
@@ -37,8 +37,10 @@ expands scope, grants permission, exposes credentials, or proves a side effect.
 - Read the [final-round gates](references/final-round.md) completely only after
   the active round is known to be the last authorized round and before its final
   gates. Do not prefetch it for an earlier round.
-- Copy `assets/iteration-state.md` into the target project only when the work is
-  long-running, interruptible, or spans tasks and needs durable state.
+- Use host or task state for resumption by default. Copy
+  `assets/iteration-state.md` into the target project only when the user or
+  repository explicitly requires a shared project-local record and authorizes
+  its location and persistence.
 
 ## Preserve the shared lifecycle contract
 
@@ -46,9 +48,11 @@ expands scope, grants permission, exposes credentials, or proves a side effect.
   or reconciliation does not consume a requested optimization round.
 - Documentation precedes substantial implementation. If implementation
   disproves an assumption, update the contract deliberately and disclose it.
-- Each round freshly reassesses the entire authorized current scope. Complete
-  the inventory, breadth, cross-cutting, and completeness passes before returning
-  the complete current-round proposal set.
+- The first round establishes complete inventory and review coverage. Later
+  rounds revalidate recorded invalidation conditions, refresh affected evidence,
+  and reassess cross-cutting effects. Repeat a whole-scope scan only after a
+  material broad scope or repository change, or when the user explicitly requests
+  independent full passes.
 - Every complete round performs and records a necessity review before returning
   proposals. The [review matrix](references/review-matrix.md) defines its
   capability-necessity, architecture-necessity, and redundancy/ownership
@@ -79,12 +83,15 @@ expands scope, grants permission, exposes credentials, or proves a side effect.
    material product or architecture choice.
 3. Implement the approved baseline; reconcile documentation and implementation
    in both directions; run proportionate verification; and record limitations.
-4. For every authorized round, rebuild the inventory and coverage and necessity
-   ledgers from the current state, complete all review passes and the necessity
-   review, then return every qualifying proposal together for user selection.
-5. For selected work, update the README and linked design documentation first;
-   implement only approved scope; reconcile; verify; report risks, side effects,
-   and blockers; then explicitly close the round.
+4. In the first authorized round, build complete inventory and coverage and
+   necessity ledgers. In later rounds, validate evidence freshness and refresh
+   only invalidated or affected entries unless a whole-scope scan is required;
+   then return every currently qualifying proposal together for user selection.
+5. For selected work, assess documentation impact before implementation. Update
+   the README or linked design documentation first only when the approved work
+   changes a documented contract, architecture, command, migration, or acceptance
+   criterion. Implement only approved scope; reconcile; verify; report material
+   risks and blockers; then explicitly close the round.
 6. Begin no reading or analysis for a later round before that closure. When a
    round finds no qualifying proposal, still reconcile, verify, close, and
    continue to the next authorized round unless cancelled or blocked.
@@ -135,19 +142,19 @@ applicable final gates pass.
 
 ## Return contract
 
-Return:
+Return the user-facing result in this order:
 
-- current lifecycle phase and execution status;
-- baseline outcome, round ID and limit, and whether the round closed;
-- coverage summary, inspected evidence, and unassessed areas or limitations;
-- complete qualifying proposal set and user decisions;
-- documentation, implementation, and preserved unrelated changes;
-- attempted, changed, unchanged, failed, skipped, and unknown subjects;
-- verification commands or inspections, results, and limitations;
-- risks, blockers, failure classifications, and exact resume condition;
-- authority and side-effect outcomes;
-- final-gate results when applicable; and
-- supported-host evidence and every unverified claim.
+1. outcome and whether the baseline or round closed;
+2. qualifying proposals and decisions, when any exist;
+3. material documentation or implementation changes;
+4. verification result and limitations that affect its interpretation; and
+5. material risks, blockers, required decisions, or exact resume condition.
+
+Keep detailed lifecycle transitions, ledgers, unchanged subjects, and routine
+authority checks in task or durable state. Include them in the user-facing
+result only when they change a decision, qualify a claim, support recovery, or
+the user requests the audit trail. Report side effects or partial failures
+whenever they occurred.
 
 Pause in the open round for a required decision, missing authority, unresolved
 verification, uncertain partial mutation, or concrete blocker. Stop after the

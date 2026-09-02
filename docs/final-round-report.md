@@ -32,13 +32,22 @@ any time, and is not a supported recovery mechanism.
 
 ## Verification
 
-- Passed all 64 focused tests: repository validator 31, runtime revision 22,
+- Passed all 65 focused tests: repository validator 32, runtime revision 22,
   and control evidence 11.
 - Passed aggregate repository validation, exact runtime-manifest binding,
   external Skill validation, and external eval-spec validation.
 - Refreshed ten held-out Codex routing observations against runtime revision
-  `sha256:86076be9e335b5ba8316bf082f2306aef33fe1315cc55ecf5a7fd8e6623cf9dd`:
+  `sha256:390c5b82be4d780e3e95efacd901fd555cc36f676c24bc9a94847d43e4d1260f`:
   positives selected/loaded 5/5; near misses selected/loaded 0/5.
+- Ran the newly added one-off small-project near miss five times; it selected
+  and loaded `self-iteration` 0/5. These event streams were reviewed
+  in-session and are not retained as release-grade evidence.
+- Ran five no-Skill controls and five current-Skill observations for an
+  unchanged-state proposal-only second round. Both variants avoided a redundant
+  full rescan, unauthorized project-local state, unnecessary documentation
+  updates, and full-ledger user output. The current Skill complied 5/5; these
+  event streams were reviewed in-session but are not retained as release-grade
+  behavior evidence.
 - Ran one no-Skill proposal-only control and five final-Skill candidate
   repetitions. All six completed three sequential read-only rounds without a
   selection stop; candidate repetitions loaded the Skill 5/5, recorded every

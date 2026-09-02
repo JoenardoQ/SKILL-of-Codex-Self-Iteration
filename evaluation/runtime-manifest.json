@@ -7,8 +7,8 @@
     {
       "path": "SKILL.md",
       "mode": "0644",
-      "bytes": 8348,
-      "sha256": "40a8b8758f84040b511057fae71891a26660e614923210e3e3ae19e8dfb03c44"
+      "bytes": 8814,
+      "sha256": "0de73ed315971ffc72a239c70b81b843e0a447d60f9ed45c6100b6dc82ed62e4"
     },
     {
       "path": "agents/openai.yaml",
@@ -19,27 +19,27 @@
     {
       "path": "assets/iteration-state.md",
       "mode": "0644",
-      "bytes": 2975,
-      "sha256": "ab40f3b3743f955ff837f063a96e48a256fa284dd0250ba2fe8bb484312b3d16"
+      "bytes": 3175,
+      "sha256": "cb082e986c0499bcada9c8836625585d41c589797a34ac7597ffa9f7a3d6c99d"
     },
     {
       "path": "references/final-round.md",
       "mode": "0644",
-      "bytes": 5135,
-      "sha256": "aab16f9858c2c311abb5e73a6fb3c99f33379232c5ba8b99853589503a5b0a4d"
+      "bytes": 5421,
+      "sha256": "102334ed4b90d156e295132924f9f347a0255e1438441ad4e859856a349f6039"
     },
     {
       "path": "references/review-matrix.md",
       "mode": "0644",
-      "bytes": 7604,
-      "sha256": "e0a43ad6f1d868ce54a9c6d68dac9b30504adf90b19f31392cd776ccab5daa72"
+      "bytes": 8019,
+      "sha256": "a5fbe596dda302143b2104bd525bebc888479d67de0c80abfd7ec36f842ec453"
     },
     {
       "path": "references/round-protocol.md",
       "mode": "0644",
-      "bytes": 11080,
-      "sha256": "c4c8130213506089495849c3239932f350f5b3208a4f55809514170ead9cb990"
+      "bytes": 11801,
+      "sha256": "b8c3861e990b2568f25540b59e5de2b9cf2e2e3dd716cc725f836182b85d2729"
     }
   ],
-  "runtime_revision": "sha256:86076be9e335b5ba8316bf082f2306aef33fe1315cc55ecf5a7fd8e6623cf9dd"
+  "runtime_revision": "sha256:390c5b82be4d780e3e95efacd901fd555cc36f676c24bc9a94847d43e4d1260f"
 }

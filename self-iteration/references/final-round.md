@@ -5,12 +5,16 @@ declares the current round final. The round stays open through both gates.
 
 ## Repository hygiene gate
 
-1. Re-inventory entry points, modules, packages, types, functions, methods,
-   branches, imports, exports, dependencies, configuration, build targets,
-   schemas, generated boundaries, tests, scripts, and documented components.
-2. Across the whole repository, find unreachable, unreferenced, duplicated,
-   obsolete, superseded, or requirement-orphaned material. Do not stop after the
-   first cleanup candidate.
+1. Revalidate the current round's inventory and hygiene evidence for entry
+   points, modules, packages, types, functions, methods, branches, imports,
+   exports, dependencies, configuration, build targets, schemas, generated
+   boundaries, tests, scripts, and documented components. Refresh invalidated or
+   affected areas. Repeat a whole-repository inventory only after material broad
+   change, missing complete prior coverage, or an explicit request for an
+   independent full pass.
+2. Across the current or explicitly revalidated coverage, find unreachable,
+   unreferenced, duplicated, obsolete, superseded, or requirement-orphaned
+   material. Do not stop after the first cleanup candidate.
 3. Establish deletion evidence using the strongest applicable combination of
    reference search, call or dependency graphs, compiler/linter diagnostics,
    coverage, tests, build configuration, framework registration, runtime entry

@@ -1,8 +1,9 @@
 # Iteration State
 
-Copy this file into the target project for long-running, interruptible, or
-cross-task self-iteration. Keep facts concise and update them at every phase or
-status transition.
+Prefer host or task state. Copy this file into the target project only when the
+user or repository requires a shared cross-task record and authorizes its
+location and persistence. Keep facts concise and update them at material phase
+or status transitions.
 
 ## Identity
 
@@ -38,6 +39,10 @@ Only `ROUND_CLOSE` or `FINALIZE` may use `CLOSED`.
 - Separately gated external actions:
 
 ## Inventory and coverage
+
+- Evidence carried forward from prior round:
+- Invalidation conditions checked:
+- Evidence invalidated or refreshed:
 
 | Dimension or area | Evidence inspected | Status | Result | Limits |
 | --- | --- | --- | --- | --- |

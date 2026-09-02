@@ -6,9 +6,11 @@ A **baseline delivery** creates or reconciles the documented project contract,
 implements the initially requested scope, and verifies the result. It is not an
 optimization round unless the user explicitly defines it that way.
 
-An **optimization round** is a fresh, comprehensive review of the current project
-state followed by user selection, documentation-first implementation, bilateral
-reconciliation, verification, and explicit closure.
+An **optimization round** is a current, evidence-backed review followed by user
+selection, documentation-impact handling, implementation of approved scope,
+bilateral reconciliation, verification, and explicit closure. The first round
+establishes full coverage; later rounds may carry forward evidence after its
+invalidation conditions are revalidated.
 
 ## Establish the contract
 
@@ -50,9 +52,10 @@ Only `ROUND_CLOSE` or `FINALIZE` may use `CLOSED`. Waiting, pausing, blocking, o
 failing verification keeps the current round open. When a blocker is reported,
 retain its phase and record the exact condition needed to resume.
 
-Exactly one round may be active. Its boundary begins with the fresh read and ends
-only after closing evidence is reported. Multiple-round authorization permits
-sequential repetition, not concurrent review or advance thinking. A baseline
+Exactly one round may be active. Its boundary begins with current-state
+revalidation and ends only after closing evidence is recorded. Multiple-round
+authorization permits sequential repetition, not concurrent review or advance
+thinking. A baseline
 with no authorized optimization round may proceed directly to `FINALIZE` after
 its own reconciliation and verification.
 
@@ -79,19 +82,26 @@ documented claims and implemented behavior in both directions.
 
 ## Optimization round
 
-1. Set phase to `ROUND_REVIEW` and status to `ACTIVE`. Re-inventory the newly
-   established project state and build a new coverage ledger. Previous findings
-   may be leads but are not automatically valid evidence.
-2. Complete all passes in `review-matrix.md`. Accumulate findings without
-   returning early or reserving known opportunities for later rounds.
+1. Set phase to `ROUND_REVIEW` and status to `ACTIVE`. In the first round, build
+   the complete inventory and coverage ledger. In a later round, compare current
+   repository, instruction, scope, contract, dependency, and runtime state with
+   recorded invalidation conditions. Carry forward only evidence whose
+   conditions remain valid; refresh invalidated entries and affected
+   cross-cutting areas. Re-inventory the whole scope after a material broad
+   change or an explicit request for independent full passes.
+2. Complete the applicable passes in `review-matrix.md`. Accumulate current
+   findings without returning early or reserving known opportunities for later
+   rounds.
 3. Present the entire current proposal set and compact coverage summary. When
    proposals exist, set phase to `USER_APPROVAL` and status to `WAITING_USER`,
    then stop for selection. If none exist, record that result, keep status
    `ACTIVE`, and proceed to reconciliation and verification without an empty
    approval request.
-4. For approved work, set phase to `DOC_UPDATE`, restore status to `ACTIVE`, and
-   change the README and linked design documents first, including requirements,
-   architecture, migration impact, and acceptance criteria.
+4. For approved work, assess whether it changes documented behavior,
+   architecture, commands, migration, or acceptance criteria. If it does, set
+   phase to `DOC_UPDATE`, restore status to `ACTIVE`, and update the owning README
+   or design documentation first. Otherwise record no documentation impact and
+   proceed directly to implementation.
 5. Set phase to `IMPLEMENT`. Make the approved implementation and test changes
    while preserving unrelated user work.
 6. Set phase to `RECONCILE`. Inspect the resulting implementation and correct
@@ -113,7 +123,7 @@ verification, and any required final gates. Rejection is not a blocker.
 
 If, before review, the user explicitly requests proposal-only rounds and directs
 that every proposal be recorded as rejected, treat that direction as the
-proposal decision for each authorized round. Complete the fresh review and full
+proposal decision for each authorized round. Complete the current review and
 proposal set, record the rejection, skip `DOC_UPDATE` and `IMPLEMENT`, then run
 read-only reconciliation, verification, final gates when applicable, and close
 the round before beginning the next. Do not ask for selection under that policy,
@@ -121,10 +131,10 @@ and do not divide one review into artificial proposal batches to fill the round
 count. Without this explicit rejection policy, proposals still stop at
 `USER_APPROVAL / WAITING_USER`.
 
-A round with no justified proposal still records full coverage, verification or
-inspection evidence, risks, and closing evidence. It counts toward the authorized
-number. Continue to the next authorized round after closure unless the user
-cancels or a concrete blocker prevents it.
+A round with no justified proposal still records coverage freshness,
+verification or inspection evidence, material risks, and closing evidence. It
+counts toward the authorized number. Continue to the next authorized round after
+closure unless the user cancels or a concrete blocker prevents it.
 
 ## Approval and authority
 
@@ -146,8 +156,10 @@ that its original acceptance criteria passed.
 
 ## Durable state and resumption
 
-Short tasks may keep the ledger in the task plan. Long, interruptible, or
-cross-task work should maintain a project iteration-state document containing:
+Keep resumption state in host or task storage by default. A project-local
+iteration-state document is warranted only when the user or repository requires
+a shared cross-task record and authorizes its location and persistence. That
+record contains:
 
 - `round_id`, `round_limit`, `phase`, `status`, and `baseline_revision`;
 - `Skill runtime revision` plus `Runtime revision source`; the source is only a
@@ -177,7 +189,8 @@ Close a round only when:
 
 - coverage is complete or every concrete limitation is disclosed;
 - selected scope is implemented or explicitly withdrawn;
-- documentation-first changes and bilateral reconciliation are complete;
+- required documentation-impact changes and bilateral reconciliation are
+  complete;
 - required verification completed and failures are resolved; unavailable or
   non-required checks are disclosed as limitations;
 - risks, rejected/deferred proposals, blockers, and completion evidence are

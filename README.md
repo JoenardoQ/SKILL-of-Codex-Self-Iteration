@@ -1,9 +1,9 @@
 # Codex Self Iteration Skill
 
-`self-iteration` is a documentation-first Agent Skill for substantial project
-delivery and complete, sequential, user-approved optimization rounds. It is not
-intended for one-off advice, ordinary small edits, repository-wide policy, or
-missing tool connectivity.
+`self-iteration` is an Agent Skill for substantial project delivery that needs
+engineering-contract reconciliation or explicit, sequential, user-approved
+optimization rounds. It is not intended for one-off project creation or advice,
+ordinary small edits, repository-wide policy, or missing tool connectivity.
 
 Its stable invocation name is `$self-iteration`. On OpenAI hosts, the UI label
 is `AAA Self Iteration` so it sorts early within user Skill listings; host-owned
@@ -15,10 +15,13 @@ The Skill separates baseline delivery from optimization rounds:
 
 - A baseline clarifies the outcome, reconciles the README, implements approved
   scope, and verifies it without consuming an optimization round.
-- Each optimization round freshly reviews the whole authorized scope, records
-  coverage and necessity, presents every evidence-backed net-positive proposal,
-  waits for user selection, updates documentation first, implements approved
-  work, reconciles, verifies, and explicitly closes. If the user explicitly
+- The first optimization round reviews the whole authorized scope. Later rounds
+  revalidate evidence and refresh invalidated or affected areas, repeating a
+  whole-scope scan only after broad change or an explicit request for independent
+  full passes. Each round presents every evidence-backed net-positive proposal,
+  waits for user selection, updates documentation first only when the approved
+  work changes a documented contract, implements approved work, reconciles,
+  verifies, and explicitly closes. If the user explicitly
   preauthorizes proposal-only rounds with every proposal recorded as rejected,
   the Skill skips implementation and completes each round read-only without an
   additional selection stop.
@@ -49,8 +52,9 @@ self-iteration/
 ```
 
 `SKILL.md` owns selection, authority, failure, verification, and stopping rules.
-The references are loaded only when their branch applies. The state template is
-copied only for long-running or interruptible work. Development evaluation,
+The references are loaded only when their branch applies. Host or task state is
+the default for resumption; the state template enters a target project only when
+an authorized shared project-local record is required. Development evaluation,
 validation, and release files never enter the runtime bundle.
 
 The checked runtime revision is recorded in
@@ -97,6 +101,8 @@ The completed tuning campaign was removed after the untouched held-out campaign
 became the active routing evidence. No full Skill-loaded behavior campaign or
 `evaluation/eval-result.json` exists, so the repository does not claim
 release-grade behavior, L5 host lifecycle support, or cross-host portability.
+The active routing plan additionally records one-off small-project creation as a
+near miss; it has plan coverage but no retained host observation yet.
 
 ## Host scope
 

@@ -113,6 +113,7 @@ EVALUATION_ROUTING_CASES = {
     "new-project-iterative-delivery": ("positive", True),
     "reconcile-and-improve-paraphrase": ("paraphrase", True),
     "one-off-small-edit": ("near_miss", False),
+    "one-off-small-project-creation": ("near_miss", False),
     "repo-policy-or-tool-connectivity": ("conflict", False),
     "unrelated-writing-request": ("unrelated", False),
     "contract-reconciliation-heldout-positive": ("positive", True),

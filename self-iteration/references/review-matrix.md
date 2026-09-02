@@ -13,10 +13,11 @@ unassessed areas precisely; never label a partial scan comprehensive.
 
 ## Necessity review and ledger
 
-For every round, independently cover capability necessity, architecture
-necessity, and redundancy/ownership before returning proposals. Inventory every
-material subject, or an explicitly bounded homogeneous group, before proposing
-changes. Capability necessity maps each subject to an approved outcome,
+In the first round, cover capability necessity, architecture necessity, and
+redundancy/ownership before returning proposals. In later rounds, revalidate the
+conditions supporting retained entries and independently reassess invalidated or
+affected subjects. Inventory every material subject, or an explicitly bounded
+homogeneous group, before proposing changes. Capability necessity maps each subject to an approved outcome,
 acceptance criterion, required operation, or demonstrated consumer. Architecture
 necessity assesses abstractions, layers, indirections, extension points,
 boundaries, shared subsystems, and dependencies against concrete consumers,
@@ -25,19 +26,19 @@ requirements. Redundancy/ownership covers commands, functions, modules, data
 paths, schemas, configuration, adapters, tests, and documentation, identifying
 canonical ownership and safe consolidation.
 
-The necessity ledger may be integrated with the coverage ledger. Produce it as a
-table with these REQUIRED exact column headers, in this order, for every
-material subject or bounded group:
+The necessity ledger may be integrated with the coverage ledger and kept in task
+state. Use fields equivalent to the following for every material subject or
+bounded group; exact presentation is not required:
 
 | Subject/kind | Observed consumers and contract evidence | Status | Compatibility/dynamic-discovery risk | Result/rationale | Evidence limits |
 | --- | --- | --- | --- | --- | --- |
 
-Create one row per material subject or bounded group. Populate its subject and
+Create one entry per material subject or bounded group. Populate its subject and
 boundary, observed consumers and approved-outcome, acceptance,
 required-operation, or contract evidence, compatibility or discovery risk,
 evidence-backed rationale, and evidence limits in their respective columns.
 
-Set each `Status` cell to exactly one of these lowercase tokens:
+Use one of these status values consistently:
 `necessary`, `candidate remove`, `candidate merge`, `candidate simplify`, or
 `unassessed`.
 
@@ -79,9 +80,9 @@ Assess every materially applicable dimension:
 
 Mark a dimension `not applicable` only with a reason grounded in the project.
 
-## Complete three passes
+## Complete the applicable passes
 
-1. **Breadth pass:** inspect every inventory area and coverage dimension,
+1. **Breadth pass:** in the first round, inspect every inventory area and coverage dimension,
    including the necessity ledger's material subjects, accumulating all findings
    without returning at the first upgrade.
 2. **Cross-cutting pass:** look for contradictions, shared root causes,
@@ -91,7 +92,10 @@ Mark a dimension `not applicable` only with a reason grounded in the project.
    challenge unsupported necessity and no-change claims, consolidate duplicates,
    and map proposal dependencies.
 
-Only after all three passes may proposals be ranked and returned.
+In later rounds, apply the breadth pass to invalidated or affected areas, repeat
+the cross-cutting pass across their dependencies, and challenge carried-forward
+evidence against its recorded invalidation conditions. Only after the applicable
+passes may proposals be ranked and returned.
 
 ## Coverage ledger
 
@@ -105,11 +109,11 @@ For each dimension record:
 | Result | Findings or the evidence-backed reason for the status |
 | Limits | Missing access, weak evidence, dynamic behavior, or other uncertainty |
 
-A major repository area or applicable dimension without an entry keeps the round
-open. Record evidence freshness and scope boundaries so a repository change or
-scope decision can invalidate only the affected entries rather than silently
-carrying stale findings forward. A material subject or bounded group without a
-necessity-ledger entry also keeps the round open.
+A major repository area or applicable dimension without a current or explicitly
+revalidated entry keeps the round open. Record evidence freshness, scope
+boundaries, and invalidation conditions so a repository change or scope decision
+invalidates only affected entries. A material subject or bounded group without a
+current or revalidated necessity entry also keeps the round open.
 
 ## Proposal set
 
@@ -138,5 +142,6 @@ Report all qualifying opportunities reasonably discoverable from current
 evidence. Do not knowingly defer findings to fill a later round. Later rounds
 exist to reassess the changed whole, examine new interactions, and find deeper
 or emergent issues, not to guarantee additional output. Return the proposal set
-only after every inventory partition and applicable dimension has a ledger entry
-and all three passes are complete or their concrete evidence limits are stated.
+only after every inventory partition and applicable dimension has a current or
+revalidated ledger entry and the applicable passes are complete or their
+concrete evidence limits are stated.
